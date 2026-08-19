@@ -1,0 +1,54 @@
+{
+  "title": "Enterprise Agent Overview",
+  "uid": "enterprise-agent",
+  "panels": [
+    {
+      "type": "stat",
+      "title": "请求速率（req/s）",
+      "targets": [
+        {"expr": "sum(rate(http_requests_total[5m]))", "legendFormat": "QPS"}
+      ],
+      "gridPos": {"h": 6, "w": 6, "x": 0, "y": 0}
+    },
+    {
+      "type": "stat",
+      "title": "错误率（5xx）",
+      "targets": [
+        {"expr": "sum(rate(http_requests_total{status=~\"5..\"}[5m])) / sum(rate(http_requests_total[5m]))", "legendFormat": "err"}
+      ],
+      "gridPos": {"h": 6, "w": 6, "x": 6, "y": 0}
+    },
+    {
+      "type": "graph",
+      "title": "P95 请求延迟",
+      "targets": [
+        {"expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le))", "legendFormat": "P95"}
+      ],
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 6}
+    },
+    {
+      "type": "graph",
+      "title": "Agent 迭代总数（是否频繁触顶 max_iterations）",
+      "targets": [
+        {"expr": "sum(rate(agent_iterations_total[5m]))", "legendFormat": "iterations/s"}
+      ],
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 6}
+    },
+    {
+      "type": "graph",
+      "title": "LLM 调用速率（按节点）",
+      "targets": [
+        {"expr": "sum(rate(llm_calls_total[5m])) by (node)", "legendFormat": "{{node}}"}
+      ],
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 14}
+    },
+    {
+      "type": "graph",
+      "title": "Tool 调用速率（按工具）",
+      "targets": [
+        {"expr": "sum(rate(agent_tool_calls_total[5m])) by (tool)", "legendFormat": "{{tool}}"}
+      ],
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 14}
+    }
+  ]
+}

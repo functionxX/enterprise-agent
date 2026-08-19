@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+
+# 环境与密钥——.env 绝不入库（面试点：密钥管理）
+.env
+.env.*.local
+
+# AI 辅助工具本地配置
+.claude/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# 数据与日志
+*.log
+logs/
+data/
+*.db
+
+# Docker
+docker-volume/

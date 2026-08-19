@@ -1,0 +1,20 @@
+# =============================================================
+# RAGAS 自动化评估 — 独立依赖清单（独立 venv）
+# 与 backend/requirements.txt 分离的理由（面试点）：
+# 1. 评估工具链（LLM-as-judge 打分、langchain 抽象）是开发期依赖，
+#    不是运行时依赖——生产镜像不该背着评估框架；
+# 2. 版本隔离：ragas 0.4.x 配套 langchain 1.x 存在已知兼容问题
+#    （无条件导入已移除的 vertexai 模块），且 langchain 1.x 硬性
+#    要求 langgraph>=1，与后端 langgraph<1.0 契约冲突——所以评估
+#    栈锁定 ragas 0.2.x 配套 langchain 0.3.x 时代，独立 venv 互不干扰。
+#
+# 安装（项目根目录）：
+#     python -m venv evaluation/.venv
+#     PYTHONUTF8=1 evaluation/.venv/Scripts/python -m pip install -r evaluation/requirements.txt
+#  （PYTHONUTF8=1 规避 Windows GBK 编码读取中文注释的问题）
+# =============================================================
+
+ragas==0.2.15                    # LLM-as-judge 评估框架（faithfulness / answer_relevancy）
+langchain>=0.3,<0.4              # 与 ragas 0.2.x 配套的 langchain 时代
+langchain-community>=0.3,<0.4    # <1.0：1.x 移除了 ragas 0.2.x 依赖的 vertexai 模块
+langchain-openai>=0.3,<0.4       # 评分 LLM（DeepSeek，OpenAI 兼容）与 embedding 接入

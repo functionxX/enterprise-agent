@@ -1,0 +1,96 @@
+# =============================================================
+# docker-compose.yml — 一键启动全部组件
+#
+# 用法：
+#   cp .env.example .env        # 填写 LLM_API_KEY（必须）
+#   docker compose -f docker/docker-compose.yml up -d --build
+#   docker compose -f docker/docker-compose.yml exec app python -m app.database.seed
+#
+# 组件：
+#   app        — FastAPI（:8000）
+#   postgres   — PostgreSQL 16 + pgvector（:5432，业务数据 + 向量同库）
+#   redis      — Redis 7（会话状态）
+#   prometheus — 指标采集（:9090）
+#   grafana    — 监控面板（:3000，admin/admin）
+#
+# 【设计点：为什么 app 启动不自动跑 seed（面试可能问）】
+# 种子数据是"一次性初始化动作"而不是"应用启动副作用"——
+# 生产环境启动应用绝不该清空重灌数据。docker 里用 exec 显式执行，
+# K8s 里用 initContainer / Job 执行，语义一致。
+# =============================================================
+
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      # LLM key 从宿主机 .env 传入（compose 自动读取项目根 .env）
+      LLM_API_KEY: ${LLM_API_KEY:-}
+      EMBEDDING_API_KEY: ${EMBEDDING_API_KEY:-}
+      DATABASE_URL: postgresql+asyncpg://app_role:app_password@postgres:5432/enterprise_agent
+      DATABASE_READONLY_URL: postgresql+asyncpg://agent_readonly:readonly_password@postgres:5432/enterprise_agent
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      postgres:
+        condition: service_healthy   # 等数据库就绪再起（依赖健康检查）
+      redis:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: enterprise_agent
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro  # 首次启动执行：扩展+角色+权限
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d enterprise_agent"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ../monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+      - app
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - ../monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+    depends_on:
+      - prometheus
+
+volumes:
+  pg_data:

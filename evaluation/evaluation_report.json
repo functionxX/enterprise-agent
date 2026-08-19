@@ -1,0 +1,537 @@
+[
+  {
+    "id": "eval_001",
+    "query": "过去三个月采购金额最高的供应商是哪家？总金额多少？",
+    "expected_tools": [
+      "execute_sql"
+    ],
+    "expected_tables": [
+      "purchase_orders",
+      "suppliers"
+    ],
+    "expected_answer_contains": [
+      "云集电子",
+      "金额"
+    ],
+    "difficulty": "easy",
+    "tool_score": 1.0,
+    "coverage_score": 1.0,
+    "hallucinations": [],
+    "tools_used": [
+      "execute_sql"
+    ],
+    "iterations": 1,
+    "token_usage": {
+      "prompt": 2077,
+      "completion": 515,
+      "total": 2592
+    },
+    "answer_preview": "根据查询结果，过去三个月采购金额最高的供应商是 **云集电子**，总采购金额为 **7,133,193.02 元**（数据来源：purchase_orders 表与 suppliers 表关联汇总）。\n\n| 供应商名称 | 总采购金额（元） |\n|------------|------------------|\n| 云集电子   | 7,133,193.02     |\n\n说明：本次查询基于订单日"
+  },
+  {
+    "id": "eval_002",
+    "query": "我们一共有多少家供应商？其中高风险的有几家？",
+    "expected_tools": [
+      "execute_sql"
+    ],
+    "expected_tables": [
+      "suppliers"
+    ],
+    "expected_answer_contains": [
+      "50",
+      "高风险"
+    ],
+    "difficulty": "easy",
+    "tool_score": 1.0,
+    "coverage_score": 1.0,
+    "hallucinations": [],
+    "tools_used": [
+      "execute_sql",
+      "execute_sql"
+    ],
+    "iterations": 2,
+    "token_usage": {
+      "prompt": 3332,
+      "completion": 447,
+      "total": 3779
+    },
+    "answer_preview": "根据系统数据查询结果，回答如下：\n\n- **供应商总数**：50 家（来源：`suppliers` 表）\n- **高风险供应商数量**：5 家（来源：`suppliers` 表，`risk_level = 'high'`）\n\n**结论**：贵司共有 50 家供应商，其中高风险供应商 5 家，占比 10%。建议对高风险供应商重点关注，加强日常监控与备选方案准备。"
+  },
+  {
+    "id": "eval_003",
+    "query": "目前有多少张逾期未付的发票？涉及哪些供应商？",
+    "expected_tools": [
+      "execute_sql"
+    ],
+    "expected_tables": [
+      "invoices",
+      "suppliers"
+    ],
+    "expected_answer_contains": [
+      "逾期",
+      "供应商"
+    ],
+    "difficulty": "easy",
+    "tool_score": 1.0,
+    "coverage_score": 1.0,
+    "hallucinations": [],
+    "tools_used": [
+      "execute_sql",
+      "execute_sql"
+    ],
+    "iterations": 2,
+    "token_usage": {
+      "prompt": 4011,
+      "completion": 933,
+      "total": 4944
+    },
+    "answer_preview": "## 逾期未付发票查询结果\n\n根据系统查询结果，目前共有 **4 张** 逾期未付发票（数据来源：`invoices` 表，`payment_status = 'overdue'`）。\n\n### 逾期发票明细\n\n| 发票编号 | 订单编号 | 发票金额（元） | 到期日 | 供应商编号 | 供应商名称 |\n|---------|---------|--------------|--------|-"
+  },
+  {
+    "id": "eval_004",
+    "query": "采购金额最高的产品类别是哪个？",
+    "expected_tools": [
+      "execute_sql"
+    ],
+    "expected_tables": [
+      "purchase_orders"
+    ],
+    "expected_answer_contains": [
+      "类别",
+      "金额"
+    ],
+    "difficulty": "easy",
+    "tool_score": 1.0,
+    "coverage_score": 1.0,
+    "hallucinations": [],
+    "tools_used": [
+      "execute_sql"
+    ],
+    "iterations": 1,
+    "token_usage": {
+      "prompt": 1957,
+      "completion": 336,
+      "total": 2293
+    },
+    "answer_preview": "根据采购订单数据（表：purchase_orders），采购金额最高的产品类别是 **能源材料**，累计采购金额为 **24,051,286.57 元**。\n\n| 产品类别 | 累计采购金额（元） |\n|---------|-------------------|\n| 能源材料 | 24,051,286.57 |\n\n数据来源：purchase_orders 表按类别汇总统计。"
+  },
+  {
+    "id": "eval_005",
+    "query": "各行业的供应商数量分布是怎样的？",
+    "expected_tools": [
+      "execute_sql"
+    ],
+    "expected_tables": [
+      "suppliers"
+    ],
+    "expected_answer_contains": [
+      "行业",
+      "供应商数量"
+    ],
+    "difficulty": "easy",
+    "tool_score": 1.0,
+    "coverage_score": 1.0,
+    "hallucinations": [],
+    "tools_used": [
+      "execute_sql"
+    ],
+    "iterations": 1,
+    "token_usage": {
+      "prompt": 1991,
+      "completion": 477,
+      "total": 2468
+    },
+    "answer_preview": "根据数据库查询结果，各行业的供应商数量分布如下（数据来源：`suppliers` 表）：\n\n| 行业 | 供应商数量 |\n|------|-----------|\n| 机械设备 | 8 |\n| 汽车零部件 | 8 |\n| 原材料 | 8 |\n| 能源材料 | 7 |\n| 包装材料 | 5 |\n| 办公用品 | 4 |\n| 化工产品 | 4 |\n| 电子元器件 | 3 |\n| 工业软件 | 2 |\n"
+  },
+  {
+    "id": "eval_006",
+    "query": "哪些供应商的评分低于3.5分？按供应商政策他们应该被如何处理？",
+    "expected_tools": [
+      "execute_sql",
+      "search_knowledge"
+    ],
+    "expected_tables": [
+      "suppliers"
+    ],
+    "expected_answer_contains": [
+      "3.5",
+      "需关注",
+      "整改"
+    ],
+    "difficulty": "medium",
+    "tool_score": 1.0,
+    "coverage_score": 1.0,
+    "hallucinations": [],
+    "tools_used": [
+      "execute_sql",
+      "search_knowledge",
+      "search_knowledge"
+    ],
+    "iterations": 3,
+    "token_usage": {
+      "prompt": 10308,
+      "completion": 2519,
+      "total": 12827
+    },
+    "answer_preview": "## 供应商评分低于 3.5 分清单及处理建议\n\n### 一、评分低于 3.5 分的供应商清单（共 12 家）\n\n数据来源：`suppliers` 表（查询条件：rating < 3.5）\n\n| 序号 | 供应商名称 | 评分 |\n|------|-----------|------|\n| 1 | 进取实业 | 1.6 |\n| 2 | 华芯半导体 | 2.0 |\n| 3 | 量子网络 | 2.0 "
+  },
+  {
+    "id": "eval_007",
+    "query": "单笔金额超过200万的采购订单需要什么审批流程？",
+    "expected_tools": [
+      "search_knowledge"
+    ],
+    "expected_tables": [],
+    "expected_answer_contains": [
+      "200万",
+      "采购委员会",
+      "总经理"
+    ],
+    "difficulty": "easy",
+    "tool_score": 1.0,
+    "coverage_score": 0.67,
+    "hallucinations": [],
+    "tools_used": [
+      "execute_sql",
+      "search_knowledge",
+      "search_knowledge",
+      "search_knowledge"
+    ],
+    "iterations": 4,
+    "token_usage": {
+      "prompt": 14539,
+      "completion": 1719,
+      "total": 16258
+    },
+    "answer_preview": "## 单笔金额超过 200 万元的采购订单审批流程\n\n### 一、审批权限标准（依据《企业采购管理规则》第二章第四条）\n\n根据知识库《企业采购管理规则》第二章第四条，采购订单审批权限按金额分级如下：\n\n| 单笔金额区间 | 审批权限 |\n|------------|---------|\n| 50 万元以下 | 采购经理审批 |\n| 50 万元至 200 万元 | 采购总监审批 |\n| **200 "
+  },
+  {
+    "id": "eval_008",
+    "query": "新供应商要进入合格供应商名录，需要满足哪些准入条件？",
+    "expected_tools": [
+      "search_knowledge"
+    ],
+    "expected_tables": [],
+    "expected_answer_contains": [
+      "500万",
+      "ISO9001",
+      "准入评审"
+    ],
+    "difficulty": "easy",
+    "tool_score": 1.0,
+    "coverage_score": 0.67,
+    "hallucinations": [],
+    "tools_used": [
+      "search_knowledge",
+      "search_knowledge"
+    ],
+    "iterations": 2,
+    "token_usage": {
+      "prompt": 7758,
+      "completion": 1220,
+      "total": 8978
+    },
+    "answer_preview": "# 新供应商准入条件说明\n\n根据《企业供应商管理政策》（supplier_policy.txt）及《采购合规规则》（procurement_rules.txt）、《质量验收标准》（quality_standard.txt），新供应商进入合格供应商名录需满足以下条件：\n\n---\n\n## 一、准入基本条件（硬性门槛）\n\n| 序号 | 条件 | 依据 |\n|------|------|------|\n|"
+  },
+  {
+    "id": "eval_009",
+    "query": "对照供应商评估标准，恒达精密制造的交货表现如何？",
+    "expected_tools": [
+      "execute_sql",
+      "search_knowledge"
+    ],
+    "expected_tables": [
+      "purchase_orders"
+    ],
+    "expected_answer_contains": [
+      "恒达",
+      "交付",
+      "95%",
+      "评估"
+    ],
+    "difficulty": "medium",
+    "tool_score": 1.0,
+    "coverage_score": 1.0,
+    "hallucinations": [],
+    "tools_used": [
+      "execute_sql",
+      "search_knowledge",
+      "execute_sql",
+      "search_knowledge",
+      "search_knowledge"
+    ],
+    "iterations": 4,
+    "token_usage": {
+      "prompt": 12822,
+      "completion": 1993,
+      "total": 14815
+    },
+    "answer_preview": "## 恒达精密制造交货表现评估报告\n\n### 一、供应商基本信息\n\n| 项目 | 数据 | 来源 |\n|------|------|------|\n| 供应商名称 | 恒达精密制造 | suppliers 表 |\n| 所属行业 | 机械设备 | suppliers 表 |\n| 所在国家 | 中国 | suppliers 表 |\n| 当前评分 | **2.9 分** | suppliers 表 |\n"
+  },
+  {
+    "id": "eval_010",
+    "query": "华芯半导体的风险等级是什么？我们对其的管控要求有哪些？",
+    "expected_tools": [
+      "execute_sql",
+      "search_knowledge"
+    ],
+    "expected_tables": [
+      "suppliers"
+    ],
+    "expected_answer_contains": [
+      "高风险",
+      "月度复审",
+      "改善计划"
+    ],
+    "difficulty": "medium",
+    "tool_score": 1.0,
+    "coverage_score": 1.0,
+    "hallucinations": [],
+    "tools_used": [
+      "execute_sql",
+      "search_knowledge"
+    ],
+    "iterations": 2,
+    "token_usage": {
+      "prompt": 5488,
+      "completion": 1006,
+      "total": 6494
+    },
+    "answer_preview": "## 华芯半导体风险等级与管控要求\n\n### 一、风险等级\n\n根据供应商主数据查询结果（来源：`suppliers` 表），华芯半导体的风险等级为 **高风险（high）**，当前评分为 **2.0 分**。\n\n> ⚠️ **数据异常提示**：华芯半导体评分 2.0 分，低于高风险供应商的判定阈值（3.5 分以下），且已低于不合格供应商淘汰线（3.0 分以下），属于**需重点关注的高风险供应商**"
+  },
+  {
+    "id": "eval_011",
+    "query": "有哪些供应商存在发票逾期？按照采购规则，逾期发票和交付异常同时出现时应该怎么处理？",
+    "expected_tools": [
+      "execute_sql",
+      "search_knowledge"
+    ],
+    "expected_tables": [
+      "invoices"
+    ],
+    "expected_answer_contains": [
+      "逾期",
+      "风险说明",
+      "5个工作日"
+    ],
+    "difficulty": "medium",
+    "tool_score": 1.0,
+    "coverage_score": 0.67,
+    "hallucinations": [],
+    "tools_used": [
+      "execute_sql",
+      "search_knowledge",
+      "search_knowledge"
+    ],
+    "iterations": 3,
+    "token_usage": {
+      "prompt": 10274,
+      "completion": 2012,
+      "total": 12286
+    },
+    "answer_preview": "## 一、存在发票逾期的供应商清单\n\n根据发票数据查询结果（来源：`invoices` 表关联 `purchase_orders`、`suppliers` 表），当前共有 **4 张发票逾期**，涉及 **3 家供应商**，明细如下：\n\n| 供应商名称 | 供应商ID | 发票ID | 发票金额（元） | 到期日 | 状态 |\n|-----------|---------|--------|---"
+  },
+  {
+    "id": "eval_012",
+    "query": "找出近三个月交付表现明显恶化的供应商，对照质量标准分析风险",
+    "expected_tools": [
+      "execute_sql",
+      "search_knowledge"
+    ],
+    "expected_tables": [
+      "purchase_orders",
+      "suppliers"
+    ],
+    "expected_answer_contains": [
+      "恒达",
+      "取消",
+      "交付率",
+      "95%"
+    ],
+    "difficulty": "hard",
+    "tool_score": 1.0,
+    "coverage_score": 1.0,
+    "hallucinations": [],
+    "tools_used": [
+      "execute_sql",
+      "execute_sql",
+      "search_knowledge",
+      "execute_sql",
+      "search_knowledge",
+      "search_knowledge"
+    ],
+    "iterations": 5,
+    "token_usage": {
+      "prompt": 19959,
+      "completion": 3333,
+      "total": 23292
+    },
+    "answer_preview": "## 近三个月交付表现恶化供应商风险分析报告\n\n### 一、数据说明\n\n本次分析基于采购订单履约数据（工具执行结果 [1][2][4]）与知识库标准（`quality_standard.txt`、`supplier_policy.txt`）。**需注意**：工具执行结果 [1][2] 中 SQL 查询被截断（`rows=34 truncated=True`），仅返回部分供应商数据；工具执行结果 ["
+  },
+  {
+    "id": "eval_013",
+    "query": "高风险供应商的采购金额占比是否超过30%？如果超过，违反了哪条政策？",
+    "expected_tools": [
+      "execute_sql",
+      "search_knowledge"
+    ],
+    "expected_tables": [
+      "purchase_orders",
+      "suppliers"
+    ],
+    "expected_answer_contains": [
+      "30%",
+      "高风险",
+      "政策"
+    ],
+    "difficulty": "hard",
+    "tool_score": 1.0,
+    "coverage_score": 1.0,
+    "hallucinations": [],
+    "tools_used": [
+      "execute_sql",
+      "search_knowledge"
+    ],
+    "iterations": 2,
+    "token_usage": {
+      "prompt": 5429,
+      "completion": 988,
+      "total": 6417
+    },
+    "answer_preview": "## 高风险供应商采购金额占比分析\n\n### 一、核心结论\n\n**高风险供应商采购金额占比为 13.30%，未超过 30% 的政策红线，不构成违规。**\n\n### 二、数据明细\n\n| 指标 | 数值 | 数据来源 |\n|------|------|----------|\n| 高风险供应商采购金额 | 8,866,629.79 元 | 采购订单表（execute_sql 查询结果） |\n| 采购总金"
+  },
+  {
+    "id": "eval_014",
+    "query": "电子元器件行业的整体交付情况如何？相比其他行业有什么异常？",
+    "expected_tools": [
+      "execute_sql"
+    ],
+    "expected_tables": [
+      "purchase_orders",
+      "suppliers"
+    ],
+    "expected_answer_contains": [
+      "电子元器件",
+      "取消",
+      "行业"
+    ],
+    "difficulty": "hard",
+    "tool_score": 1.0,
+    "coverage_score": 1.0,
+    "hallucinations": [],
+    "tools_used": [
+      "execute_sql",
+      "execute_sql",
+      "search_knowledge",
+      "execute_sql",
+      "search_knowledge",
+      "search_knowledge"
+    ],
+    "iterations": 5,
+    "token_usage": {
+      "prompt": 16504,
+      "completion": 2649,
+      "total": 19153
+    },
+    "answer_preview": "## 电子元器件行业交付情况分析\n\n### 一、电子元器件行业交付概况\n\n根据采购订单数据（表：采购订单），电子元器件行业当前交付情况如下：\n\n| 指标 | 数值 |\n|------|------|\n| 总订单数 | 21 单 |\n| 已完成订单 | 14 单 |\n| 待处理订单 | 2 单 |\n| 取消/异常订单 | 5 单 |\n| 订单总金额 | 219,974.80 元 |\n| 平均单笔金额"
+  },
+  {
+    "id": "eval_015",
+    "query": "分析华芯半导体近两个月的采购趋势，结合其风险等级评估潜在风险",
+    "expected_tools": [
+      "execute_sql",
+      "search_knowledge"
+    ],
+    "expected_tables": [
+      "purchase_orders",
+      "suppliers"
+    ],
+    "expected_answer_contains": [
+      "华芯",
+      "增长",
+      "高风险",
+      "风险"
+    ],
+    "difficulty": "hard",
+    "tool_score": 1.0,
+    "coverage_score": 0.75,
+    "hallucinations": [],
+    "tools_used": [
+      "execute_sql",
+      "execute_sql",
+      "search_knowledge",
+      "search_knowledge"
+    ],
+    "iterations": 4,
+    "token_usage": {
+      "prompt": 13439,
+      "completion": 3384,
+      "total": 16823
+    },
+    "answer_preview": "# 华芯半导体近两个月采购趋势与风险分析\n\n## 一、供应商基础信息\n\n| 项目 | 数据 |\n|------|------|\n| 供应商名称 | 华芯半导体 |\n| 所属行业 | 电子元器件 |\n| 国家/地区 | 美国 |\n| 评估得分 | 2.0 分 |\n| 风险等级 | **高风险** |\n\n> 数据来源：suppliers 表（supplier_id=66）\n\n---\n\n## 二、近两个"
+  },
+  {
+    "id": "eval_016",
+    "query": "哪些采购订单还在等待处理（pending）？涉及哪些供应商和产品类别？",
+    "expected_tools": [
+      "execute_sql"
+    ],
+    "expected_tables": [
+      "purchase_orders",
+      "suppliers"
+    ],
+    "expected_answer_contains": [
+      "pending",
+      "供应商"
+    ],
+    "difficulty": "easy",
+    "tool_score": 1.0,
+    "coverage_score": 1.0,
+    "hallucinations": [],
+    "tools_used": [
+      "execute_sql"
+    ],
+    "iterations": 1,
+    "token_usage": {
+      "prompt": 2776,
+      "completion": 1787,
+      "total": 4563
+    },
+    "answer_preview": "## 待处理采购订单汇总\n\n根据 `purchase_orders` 与 `suppliers` 表关联查询结果，当前共有 **15 条** 待处理（pending）采购订单，涉及 **15 家供应商** 和 **10 个产品类别**。具体明细如下：\n\n| 订单号 | 产品名称 | 产品类别 | 金额（元） | 数量 | 下单日期 | 供应商 | 供应商行业 | 国家 |\n|--------|--"
+  },
+  {
+    "id": "eval_017",
+    "query": "按供应商政策，哪些供应商应被列入重点关注名单？为什么？",
+    "expected_tools": [
+      "execute_sql",
+      "search_knowledge"
+    ],
+    "expected_tables": [
+      "purchase_orders",
+      "suppliers"
+    ],
+    "expected_answer_contains": [
+      "重点",
+      "交付",
+      "恶化"
+    ],
+    "difficulty": "hard",
+    "tool_score": 1.0,
+    "coverage_score": 1.0,
+    "hallucinations": [],
+    "tools_used": [
+      "search_knowledge",
+      "search_knowledge",
+      "execute_sql",
+      "search_knowledge",
+      "search_knowledge"
+    ],
+    "iterations": 4,
+    "token_usage": {
+      "prompt": 15722,
+      "completion": 1840,
+      "total": 17562
+    },
+    "answer_preview": "## 供应商重点关注名单分析\n\n### 一、政策依据（引用标准原文要点）\n\n根据《供应商管理政策》及《企业采购质量标准与验收规范》，以下情形应列入重点关注名单：\n\n| 政策条款 | 原文要点 |\n|---------|---------|\n| **供应商政策·第九条** | 连续两个月交付指标恶化的供应商**自动列入重点关注名单** |\n| **供应商政策·第五条** | 高风险供应商：评估得分 "
+  }
+]

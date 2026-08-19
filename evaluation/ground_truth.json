@@ -1,0 +1,149 @@
+{
+  "meta": {
+    "description": "Agent 评估标注集。expected_tools 只标注必须调用的 tool；expected_answer_contains 标注答案必须包含的关键信息；difficulty 分 easy/medium/hard。评估维度见 evaluate.py。",
+    "seed_anomalies": [
+      "恒达精密制造：近3个月交付率骤降（大量 cancelled 订单）+ 2张发票 overdue",
+      "华芯半导体：high risk 供应商，近2个月订单金额暴增200%",
+      "电子元器件行业：整体交付延迟率偏高"
+    ],
+    "note": "用例依赖 database/seed.py 的固定种子数据（SEED=42）。重跑种子后结论应可复现。"
+  },
+  "cases": [
+    {
+      "id": "eval_001",
+      "query": "过去三个月采购金额最高的供应商是哪家？总金额多少？",
+      "expected_tools": ["execute_sql"],
+      "expected_tables": ["purchase_orders", "suppliers"],
+      "expected_answer_contains": ["云集电子", "金额"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "eval_002",
+      "query": "我们一共有多少家供应商？其中高风险的有几家？",
+      "expected_tools": ["execute_sql"],
+      "expected_tables": ["suppliers"],
+      "expected_answer_contains": ["50", "高风险"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "eval_003",
+      "query": "目前有多少张逾期未付的发票？涉及哪些供应商？",
+      "expected_tools": ["execute_sql"],
+      "expected_tables": ["invoices", "suppliers"],
+      "expected_answer_contains": ["逾期", "供应商"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "eval_004",
+      "query": "采购金额最高的产品类别是哪个？",
+      "expected_tools": ["execute_sql"],
+      "expected_tables": ["purchase_orders"],
+      "expected_answer_contains": ["类别", "金额"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "eval_005",
+      "query": "各行业的供应商数量分布是怎样的？",
+      "expected_tools": ["execute_sql"],
+      "expected_tables": ["suppliers"],
+      "expected_answer_contains": ["行业", "供应商数量"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "eval_006",
+      "query": "哪些供应商的评分低于3.5分？按供应商政策他们应该被如何处理？",
+      "expected_tools": ["execute_sql", "search_knowledge"],
+      "expected_tables": ["suppliers"],
+      "expected_answer_contains": ["3.5", "需关注", "整改"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "eval_007",
+      "query": "单笔金额超过200万的采购订单需要什么审批流程？",
+      "expected_tools": ["search_knowledge"],
+      "expected_tables": [],
+      "expected_answer_contains": ["200万", "采购委员会", "总经理"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "eval_008",
+      "query": "新供应商要进入合格供应商名录，需要满足哪些准入条件？",
+      "expected_tools": ["search_knowledge"],
+      "expected_tables": [],
+      "expected_answer_contains": ["500万", "ISO9001", "准入评审"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "eval_009",
+      "query": "对照供应商评估标准，恒达精密制造的交货表现如何？",
+      "expected_tools": ["execute_sql", "search_knowledge"],
+      "expected_tables": ["purchase_orders"],
+      "expected_answer_contains": ["恒达", "交付", "95%", "评估"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "eval_010",
+      "query": "华芯半导体的风险等级是什么？我们对其的管控要求有哪些？",
+      "expected_tools": ["execute_sql", "search_knowledge"],
+      "expected_tables": ["suppliers"],
+      "expected_answer_contains": ["高风险", "月度复审", "改善计划"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "eval_011",
+      "query": "有哪些供应商存在发票逾期？按照采购规则，逾期发票和交付异常同时出现时应该怎么处理？",
+      "expected_tools": ["execute_sql", "search_knowledge"],
+      "expected_tables": ["invoices"],
+      "expected_answer_contains": ["逾期", "风险说明", "5个工作日"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "eval_012",
+      "query": "找出近三个月交付表现明显恶化的供应商，对照质量标准分析风险",
+      "expected_tools": ["execute_sql", "search_knowledge"],
+      "expected_tables": ["purchase_orders", "suppliers"],
+      "expected_answer_contains": ["恒达", "取消", "交付率", "95%"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "eval_013",
+      "query": "高风险供应商的采购金额占比是否超过30%？如果超过，违反了哪条政策？",
+      "expected_tools": ["execute_sql", "search_knowledge"],
+      "expected_tables": ["purchase_orders", "suppliers"],
+      "expected_answer_contains": ["30%", "高风险", "政策"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "eval_014",
+      "query": "电子元器件行业的整体交付情况如何？相比其他行业有什么异常？",
+      "expected_tools": ["execute_sql"],
+      "expected_tables": ["purchase_orders", "suppliers"],
+      "expected_answer_contains": ["电子元器件", "取消", "行业"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "eval_015",
+      "query": "分析华芯半导体近两个月的采购趋势，结合其风险等级评估潜在风险",
+      "expected_tools": ["execute_sql", "search_knowledge"],
+      "expected_tables": ["purchase_orders", "suppliers"],
+      "expected_answer_contains": ["华芯", "增长", "高风险", "风险"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "eval_016",
+      "query": "哪些采购订单还在等待处理（pending）？涉及哪些供应商和产品类别？",
+      "expected_tools": ["execute_sql"],
+      "expected_tables": ["purchase_orders", "suppliers"],
+      "expected_answer_contains": ["pending", "供应商"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "eval_017",
+      "query": "按供应商政策，哪些供应商应被列入重点关注名单？为什么？",
+      "expected_tools": ["execute_sql", "search_knowledge"],
+      "expected_tables": ["purchase_orders", "suppliers"],
+      "expected_answer_contains": ["重点", "交付", "恶化"],
+      "difficulty": "hard"
+    }
+  ]
+}

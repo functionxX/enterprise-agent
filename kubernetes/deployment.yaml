@@ -1,0 +1,105 @@
+# =============================================================
+# K8s Deployment（备查——demo 用 docker compose，生产示意用 K8s）
+#
+# 【与 docker compose 的差异（面试点）】
+# 1. 种子数据不能 exec 手动跑 → initContainer 执行 seed
+#    （K8s 的"一次性初始化动作"标准做法是 initContainer / Job）
+# 2. 密钥不走环境变量 → Secret 引用（LLM key 等）
+# 3. 副本数 2：无状态服务水平扩展——Agent state 每请求独立，
+#    天然可横向扩容（设计决策 17 的落地形态）
+# 4. readiness/liveness 分离：readiness 查 /health（依赖就绪），
+#    liveness 只查进程存活——避免依赖抖动导致 Pod 被杀重启雪崩
+# =============================================================
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: enterprise-agent
+  labels:
+    app: enterprise-agent
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: enterprise-agent
+  template:
+    metadata:
+      labels:
+        app: enterprise-agent
+    spec:
+      # 种子数据：initContainer 执行，成功后主容器才启动
+      initContainers:
+        - name: seed-data
+          image: enterprise-agent:latest
+          command: ["python", "-m", "app.database.seed"]
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: agent-secrets
+                  key: database-url
+            - name: DATABASE_READONLY_URL
+              valueFrom:
+                secretKeyRef:
+                  name: agent-secrets
+                  key: database-readonly-url
+      containers:
+        - name: app
+          image: enterprise-agent:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: LLM_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: agent-secrets
+                  key: llm-api-key
+            - name: EMBEDDING_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: agent-secrets
+                  key: embedding-api-key
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: agent-secrets
+                  key: database-url
+            - name: DATABASE_READONLY_URL
+              valueFrom:
+                secretKeyRef:
+                  name: agent-secrets
+                  key: database-readonly-url
+            - name: REDIS_URL
+              value: redis://redis:6379/0
+          # readiness：依赖就绪才接流量（/health 检查 DB+Redis+vector）
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          # liveness：只查进程存活（/metrics 无依赖，进程活着就能响应）
+          livenessProbe:
+            httpGet:
+              path: /metrics
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+            limits:
+              cpu: "2"
+              memory: "2Gi"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: agent-secrets
+type: Opaque
+stringData:   # 演示用明文；生产用 sealed-secrets / external-secrets
+  llm-api-key: "sk-xxx"
+  embedding-api-key: "sk-xxx"
+  database-url: "postgresql+asyncpg://app_role:app_password@postgres:5432/enterprise_agent"
+  database-readonly-url: "postgresql+asyncpg://agent_readonly:readonly_password@postgres:5432/enterprise_agent"

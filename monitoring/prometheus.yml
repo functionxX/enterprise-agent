@@ -1,0 +1,16 @@
+# Prometheus 配置（备查——docker compose 已挂载此文件）
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: "enterprise-agent"
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["app:8000"]
+    # 指标说明（monitoring/middleware.py 定义）：
+    #   http_requests_total          — QPS 与状态码分布
+    #   http_request_duration_seconds— 延迟直方图（P50/P95/P99）
+    #   llm_calls_total{node}        — 各 Agent 节点 LLM 调用数（成本观测）
+    #   agent_iterations_total       — Agent 循环迭代总数（是否频繁触顶）
+    #   agent_tool_calls_total{tool} — 各 tool 调用计数（瓶颈与成本分布）

@@ -1,0 +1,119 @@
+{
+  "metrics": [
+    "faithfulness",
+    "answer_relevancy"
+  ],
+  "scorer": {
+    "llm": "deepseek-chat",
+    "temperature": 0.0,
+    "embeddings": "BAAI/bge-large-zh-v1.5"
+  },
+  "avg": {
+    "faithfulness": 0.85,
+    "answer_relevancy": 0.8524
+  },
+  "cases": [
+    {
+      "case_id": "eval_001",
+      "difficulty": "easy",
+      "faithfulness": 0.7778,
+      "answer_relevancy": 0.9383
+    },
+    {
+      "case_id": "eval_002",
+      "difficulty": "easy",
+      "faithfulness": 0.75,
+      "answer_relevancy": 0.9179
+    },
+    {
+      "case_id": "eval_003",
+      "difficulty": "easy",
+      "faithfulness": 0.8857,
+      "answer_relevancy": 0.623
+    },
+    {
+      "case_id": "eval_004",
+      "difficulty": "easy",
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.901
+    },
+    {
+      "case_id": "eval_005",
+      "difficulty": "easy",
+      "faithfulness": 0.7273,
+      "answer_relevancy": 0.9969
+    },
+    {
+      "case_id": "eval_006",
+      "difficulty": "medium",
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.9136
+    },
+    {
+      "case_id": "eval_007",
+      "difficulty": "easy",
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.9838
+    },
+    {
+      "case_id": "eval_008",
+      "difficulty": "easy",
+      "faithfulness": 0.8,
+      "answer_relevancy": 0.9786
+    },
+    {
+      "case_id": "eval_009",
+      "difficulty": "medium",
+      "faithfulness": 0.6905,
+      "answer_relevancy": 0.615
+    },
+    {
+      "case_id": "eval_010",
+      "difficulty": "medium",
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.9782
+    },
+    {
+      "case_id": "eval_011",
+      "difficulty": "medium",
+      "faithfulness": 0.64,
+      "answer_relevancy": 0.9334
+    },
+    {
+      "case_id": "eval_012",
+      "difficulty": "hard",
+      "faithfulness": 0.803,
+      "answer_relevancy": 0.8662
+    },
+    {
+      "case_id": "eval_013",
+      "difficulty": "hard",
+      "faithfulness": 0.7647,
+      "answer_relevancy": 0.8903
+    },
+    {
+      "case_id": "eval_014",
+      "difficulty": "hard",
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.711
+    },
+    {
+      "case_id": "eval_015",
+      "difficulty": "hard",
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.5551
+    },
+    {
+      "case_id": "eval_016",
+      "difficulty": "easy",
+      "faithfulness": 0.9,
+      "answer_relevancy": 0.7984
+    },
+    {
+      "case_id": "eval_017",
+      "difficulty": "hard",
+      "faithfulness": 0.7111,
+      "answer_relevancy": 0.8906
+    }
+  ]
+}
