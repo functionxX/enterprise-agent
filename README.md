@@ -56,7 +56,6 @@ Agent 只有两个**通用 tool**（不是写死的业务函数）：
 复用同一份工具实现与描述（单一事实源，LangGraph 与 MCP 双协议出口零复制），
 三层只读防御随协议原样生效——外部 Agent 生态可以直接消费本平台的采购分析能力。
 
-> 面试话术：**"Agent 自己写 SQL 并执行——不是我提前写好几个查询函数。换一个业务场景（HR/财务），图和 tool 定义一行不改。"**
 
 ### 人机协同：HITL 人工审批（`hitl=true`）
 
@@ -276,16 +275,3 @@ enterprise-ai-agent/
 ```
 
 ---
-
-## 面试常见追问速查
-
-- **"为什么 Agent 图不是线性链？"** → 动态决策 + 自愈（SQL 报错回填重试）+ 受控循环。见 `graph.py` 头部注释。
-- **"怎么防止 Agent 执行写操作 SQL？"** → 三层防御：prompt 约束 / 正则拦截 / 只读数据库角色。见 `tools.py`。
-- **"为什么不用 OpenSearch？"** → 规模匹配 + 架构统一 + 运维成本。见 `vector_store.py`。
-- **"单 Agent 和多 Agent 怎么选？"** → 任务边界清晰、工具少 → 单 Agent；上下文互相干扰（SQL 推理 vs 长文检索）→ Supervisor 职责分层。见 `supervisor.py`。
-- **"HITL 怎么实现挂起和恢复？"** → `interrupt()` 在敏感工具执行前挂起，checkpointer 按 thread_id 存 checkpoint；恢复用 `Command(resume=payload)` 从挂起点继续。langgraph 0.6+ 的 ainvoke 不抛异常，返回 state 带 `__interrupt__` 键——API 据此返回 pending_approval。见 `nodes.py` / `api/agent.py`。
-- **"LangGraph 图怎么暴露给外部 Agent 生态？"** → MCP Server（stdio）：复用同一份 TOOL_DEFINITIONS/TOOL_IMPLEMENTATIONS（单一事实源，双协议零复制），只读防御随协议原样生效。见 `mcp_server/server.py`。
-- **"评估怎么保证可复现？"** → 规则化指标 + 固定种子数据做骨架；RAGAS LLM-as-judge（temperature=0）衡量规则测不到的质量维度。见 `evaluate.py` / `ragas_eval.py`。
-- **"Agent 请求超时了怎么办？"** → 双层：Router 软超时优雅收尾 + asyncio.wait_for 硬兜底。见 `nodes.py` / `api/agent.py`。
-- **"并发请求会串数据吗？"** → graph 无状态全局共享，state 每请求独立。见 `connection.py` 尾部注释。
-- **"token 成本怎么控制？"** → 截断 + 会话摘要 + 5 轮注入上限 + 每轮只调一个 tool + Langfuse 用量观测。见各文件对应注释。
